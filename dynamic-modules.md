@@ -69,11 +69,11 @@ In other words, dynamic modules provide an API for importing one module into ano
 
 #### Configuration module example
 
-We'll be using the basic version of the example code from the [configuration chapter]](/techniques/configuration#service) for this section. The completed version is available as a working [example here]().
+We'll be using the basic version of the example code from the [configuration chapter](/techniques/configuration#service) for this section. The completed version is available as a working [example here]().
 
 Our requirement is to make `ConfigModule` configurable. The basic sample hard-codes the location of the `.env` file to be in the project root folder. Let's suppose we want to make that configurable, such that you can manage your `.env` files in another folder. For example, suppose you want to store your various `.env` files in a folder under the project root called `config` (a sibling folder to `src`).
 
-Dynamic modules give us the ability to pass configuration parameters into the module being imported. Let's start from the end-goal of how this might look, and then work backwards. First, let's quickly review the _static_ case of importing the `ConfigModule` (i.e., one which has no ability to configure the imported module):
+Dynamic modules give us the ability to pass configuration parameters into the module being imported. Let's start from the end-goal of how this might look, and then work backwards. First, let's quickly review the example of _statically_ importing the `ConfigModule` (i.e., an approach which has no ability to configure the imported module):
 
 ```typescript
 // src/app.module.ts
@@ -103,7 +103,7 @@ import { ConfigModule } from './config/config.module';
   imports: [
     ConfigModule.register(
       {
-        folder: '../config'
+        folder: './config'
       },
     }),
   ],
@@ -154,7 +154,7 @@ Looking at this, we can now start to easily map the interface of a `DynamicModul
 What about the static `register()` method? We can now see that its job is to return an object that has the `DynamicModule` interface. By so doing, we are effectively providing a module to the `imports` list, similar to the way we would by listing a module class name. There are still two differences to understand to make the picture complete:
 
 1. We can now see that the `@Module()` decorator's `imports` property can take not only a class name (e.g., `imports: [UsersModule]`), but also a function **returning** a dynamic module (e.g., `imports: [ConfigModule.register({...})]`).
-2. A dynamic module has an additional property, called `module`, which serves as its name. More on this in a moment.
+2. A dynamic module has an additional property, called `module`, which serves as its name.
 
 Armed with this understanding, we can now infer what our dynamic `ConfigModule` declaration must look like. Let's take a crack at it.
 
@@ -295,7 +295,7 @@ export class ConfigModule {
 }
 ```
 
-Now we can complete the process by injecting `'CONFIG_OPTIONS'` into the `ConfigService` constructor:
+Now we can complete the process by injecting the `'CONFIG_OPTIONS'` provider into the `ConfigService` constructor:
 
 ```typescript
 // src/config/config.service.ts
