@@ -189,6 +189,7 @@ Our dynamic module isn't very interesting yet, however, as we haven't introduced
 The obvious solution for customizing the behavior of the `ConfigModule` is to pass it an `options` object in the static `register()` method. Considering things again from the perspective of the consuming module, our import looks like this:
 
 ```typescript
+// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -297,6 +298,7 @@ export class ConfigModule {
 Now we can complete the process by injecting `'CONFIG_OPTIONS'` into the `ConfigService` constructor:
 
 ```typescript
+// src/config/config.service.ts
 import { Inject } from '@nestjs/common';
 
 import * as dotenv from 'dotenv';
@@ -326,5 +328,6 @@ export class ConfigService {
 One final note, for simplicity we used a string-based injection token (`'CONFIG_OPTIONS'`) above, but best practice is to define it as a constant in a separate file, and import that file, as such:
 
 ```typescript
+// src/config/constants.ts
 export const CONFIG_OPTIONS = 'CONFIG_OPTIONS';
 ```
